@@ -1,7 +1,7 @@
 ## TODO
 
-- [ ] Setup AWS S3 bucket
-- [ ] Connect Multer to S3 bucket
+- [x] Setup AWS S3 bucket
+- [x] Connect Multer to S3 bucket
 - [ ] Create Capsule Service
 - [ ] Create Email Service and Email Queue
 - [ ] Create Confirmation Email
