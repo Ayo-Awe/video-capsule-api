@@ -1,16 +1,15 @@
 import mongoose, { Types, Schema } from "mongoose";
 
 export interface IToken {
-  userId: Types.ObjectId;
+  email: string;
   expireAt?: Date;
   token: string;
 }
 
 const TokenSchema = new mongoose.Schema<IToken>({
-  userId: {
-    type: Schema.Types.ObjectId,
+  email: {
+    type: String,
     required: true,
-    ref: "User",
     unique: true,
   },
   expireAt: {

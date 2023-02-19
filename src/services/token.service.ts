@@ -10,14 +10,14 @@ class TokenService {
   }
 
   // Create a new token in database
-  create(user: IUser) {
+  create(email: string) {
     // Generate token string
-    const tokenString = randomBytes(36).toString("hex");
+    const token = randomBytes(36).toString("hex");
 
     // Create new token
     return Token.create({
-      userId: user._id,
-      token: tokenString,
+      email,
+      token,
     });
   }
 }
