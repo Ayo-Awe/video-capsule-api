@@ -1,11 +1,12 @@
 export enum EmailTemplate {
   Confirmation = "confirmation",
-  Auth = "auth",
+  Login = "login",
+  Signup = "signup",
   Subscription = "subscription",
   Unlock = "unlock",
 }
 
-export interface EmailOptions {
+export type EmailOptions<T extends {}> = {
   to: string;
-  context: object;
-}
+  context: T;
+};
