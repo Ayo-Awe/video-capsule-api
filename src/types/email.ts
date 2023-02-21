@@ -6,7 +6,8 @@ export enum EmailTemplate {
   Unlock = "unlock",
 }
 
-export type EmailOptions<T extends {}> = {
+export type EmailOptions = {
   to: string;
-  context: T;
+  subject: string;
+  context: object;
 };

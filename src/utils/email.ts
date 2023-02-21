@@ -1,15 +1,24 @@
 import transporter from "../config/nodemailer.config";
 import { EmailOptions, EmailTemplate } from "../types/email";
+import { getTemplateHtml } from "./templates";
+import dotenv from "dotenv";
+dotenv.config();
 
-export async function sendEmail<Context extends {}>(
-  emailOptions: EmailOptions<Context>,
+export async function sendEmail(
+  emailOptions: EmailOptions,
   template: EmailTemplate
 ) {
+  // Get context from emailOptions
+  const { context, ...otherOptions } = emailOptions;
+
+  // Generate html code from template
+  const html = await getTemplateHtml(template, context);
+
   // Define mailing options
   const mailOptions = {
-    ...emailOptions,
+    ...otherOptions,
     from: process.env.EMAIL_SENDER,
-    template,
+    html,
   };
 
   // Send Email with mailing options

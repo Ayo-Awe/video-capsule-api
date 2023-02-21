@@ -14,6 +14,7 @@ class EmailService {
     const emailOptions = {
       context: { url },
       to: email,
+      subject: "Login Link",
     };
 
     await sendEmail(emailOptions, EmailTemplate.Login);
@@ -26,6 +27,7 @@ class EmailService {
     const emailOptions = {
       context: { url },
       to: email,
+      subject: "Signup Link",
     };
 
     await sendEmail(emailOptions, EmailTemplate.Signup);
