@@ -2,6 +2,7 @@ import express, { ErrorRequestHandler, Express } from "express";
 import * as dotenv from "dotenv";
 import apiRouter from "./routes/index";
 import errorHandler from "./middlewares/errorMiddleware";
+import connectDB from "./config/database.config";
 
 dotenv.config();
 
@@ -15,4 +16,8 @@ app.use(errorHandler);
 
 // Start express server
 const port = process.env.PORT || 8080;
-app.listen(port, () => console.log(`Listening on port ${port}`));
+
+// Connect to Database then start server
+connectDB(() => {
+  app.listen(port, () => console.log(`Listening on port ${port}`));
+});
