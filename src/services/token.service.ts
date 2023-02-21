@@ -9,6 +9,11 @@ class TokenService {
     return Token.findOne({ token });
   }
 
+  // Retrieve a token from the database by email
+  getByEmail(email: string) {
+    return Token.findOne({ email });
+  }
+
   // Create a new token in database
   create(email: string) {
     // Generate token string
