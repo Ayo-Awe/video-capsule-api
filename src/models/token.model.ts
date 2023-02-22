@@ -1,5 +1,7 @@
 import mongoose, { Types, Schema } from "mongoose";
 
+const fiveMinutesInMilliseconds = 5 * 60 * 1000;
+
 export interface IToken {
   email: string;
   expireAt?: Date;
@@ -14,8 +16,8 @@ const TokenSchema = new mongoose.Schema<IToken>({
   },
   expireAt: {
     type: Date,
-    default: Date.now(),
-    index: { expires: "3600s" },
+    default: Date.now() + fiveMinutesInMilliseconds,
+    index: { expires: "300s" },
   },
   token: {
     type: String,
