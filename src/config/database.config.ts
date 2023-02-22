@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const mongoURI = process.env.MONGO_URI as string;
 
 export default function connectDB(callback: () => any) {
+  mongoose.set("strictQuery", false);
   mongoose
     .connect(mongoURI)
     .then(() => {
