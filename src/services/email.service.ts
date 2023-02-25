@@ -1,5 +1,7 @@
 import { EmailTemplate } from "../types/email";
 import { buildLoginURL, buildSignUpURL, sendEmail } from "../utils/email";
+import { randomBytes } from "crypto";
+import tokenService from "./token.service";
 
 // Define an email service class
 class EmailService {
@@ -7,7 +9,11 @@ class EmailService {
   sendSubsriptionEmail() {}
   sendCapsuleEmail() {}
 
-  async sendLoginEmail(email: string, token: string, redirect?: string) {
+  async sendLoginEmail(email: string, redirect?: string) {
+    // Generate and create new token
+    const token = randomBytes(36).toString("hex");
+    await tokenService.create(email, token);
+
     // Generate login link
     const url = buildLoginURL(token, redirect);
 
@@ -20,7 +26,11 @@ class EmailService {
     await sendEmail(emailOptions, EmailTemplate.Login);
   }
 
-  async sendSignUpEmail(email: string, token: string) {
+  async sendSignUpEmail(email: string) {
+    // Generate and create new token
+    const token = randomBytes(36).toString("hex");
+    await tokenService.create(email, token);
+
     // Generate signup link
     const url = buildSignUpURL(token);
 
