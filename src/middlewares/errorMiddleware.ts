@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
+import logger from "../config/winston.config";
 import { BaseError } from "../errors/httpErrors";
 import { HttpErrorCode } from "../types/errors";
 
-const errorHandler = (
+export const errorHandler = (
   err: Error | BaseError,
   req: Request,
   res: Response,
@@ -24,4 +25,9 @@ const formatError = (message: string, errors?: Object) => ({
   errors,
 });
 
-export default errorHandler;
+export const errorLogger: ErrorRequestHandler = (err, req, res, next) => {
+  // Only log non HTTP errors i.e Don't log bad request errors etc
+  if (!err.statusCode) logger.error(err.message, err);
+
+  next(err);
+};
