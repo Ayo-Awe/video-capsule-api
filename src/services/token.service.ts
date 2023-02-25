@@ -1,6 +1,4 @@
 import Token from "../models/token.model";
-import { IUser } from "../models/user.model";
-import { randomBytes } from "crypto";
 
 // Token Service class
 class TokenService {
@@ -15,10 +13,7 @@ class TokenService {
   }
 
   // Create a new token in database
-  create(email: string) {
-    // Generate token string
-    const token = randomBytes(36).toString("hex");
-
+  async create(email: string, token: string) {
     // Create new token
     return Token.create({
       email,
