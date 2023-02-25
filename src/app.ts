@@ -3,6 +3,10 @@ import * as dotenv from "dotenv";
 import apiRouter from "./routes/index";
 import { errorHandler, errorLogger } from "./middlewares/errorMiddleware";
 import connectDB from "./config/database.config";
+import agenda from "./config/agenda.config";
+import capsuleService from "./services/capsule.service";
+import mongoose from "mongoose";
+import { registerJobs } from "./job";
 
 dotenv.config();
 
@@ -21,5 +25,7 @@ const port = process.env.PORT || 8080;
 // IIFE to start express application
 (async () => {
   await connectDB();
+  await agenda.start();
+  registerJobs(agenda);
   app.listen(port, () => console.log(`Listening on port ${port}`));
 })();
