@@ -17,7 +17,7 @@ class AuthController {
     if (error) throw new BadRequest(error.message);
 
     // Check if user already exists
-    const user = await userService.getOne(email);
+    const user = await userService.getByEmail(email);
     if (user) throw new BadRequest("User already exists");
 
     // Check for existing signup token
@@ -39,7 +39,7 @@ class AuthController {
     if (error) throw new BadRequest(error.message);
 
     // Check if user already exists
-    const user = await userService.getOne(email);
+    const user = await userService.getByEmail(email);
     if (!user) throw new BadRequest("User doesn't exist");
 
     // Check for existing signup token
@@ -61,7 +61,7 @@ class AuthController {
     if (!existingToken) throw new BadRequest("Invalid token");
 
     // Get user from database
-    const user = await userService.getOne(existingToken.email);
+    const user = await userService.getByEmail(existingToken.email);
     if (!user) throw new ResourceNotFound("User not found");
 
     // Login user
@@ -108,7 +108,7 @@ class AuthController {
     if (error) throw new BadRequest(error.message);
 
     // Get user from database
-    const user = await userService.getOne(email);
+    const user = await userService.getByEmail(email);
 
     // Existing user tries to signup againx
     if (isSignup && user) throw new BadRequest("User already exists");

@@ -8,13 +8,14 @@ class UserService {
     return User.create(data);
   }
 
-  // Find user by id or email
-  async getOne(selector: string | Types.ObjectId) {
+  async getByEmail(email: string) {
     // Find User by email
-    if (typeof selector == "string") return User.findOne({ email: selector });
+    return User.findOne({ email });
+  }
 
-    // Find User by id
-    if (mongoose.isValidObjectId(selector)) return User.findById(selector);
+  // Find user by id or email
+  async getById(userId: string | Types.ObjectId) {
+    return User.findById(userId);
   }
 
   // Delete user by id

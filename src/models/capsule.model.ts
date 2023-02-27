@@ -4,8 +4,8 @@ export interface ICapsule {
   userId: Types.ObjectId;
   s3Key: string;
   caption: string;
-  subscribers: [{ email: string; isConfirmed: boolean }];
-  unlockDate: Date;
+  subscribers?: [{ email: string; isConfirmed: boolean }];
+  unlockDate: Date | string;
 }
 
 const CapsuleSchema = new mongoose.Schema<ICapsule>({
