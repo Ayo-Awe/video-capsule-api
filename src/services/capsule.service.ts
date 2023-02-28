@@ -1,8 +1,13 @@
 import { Types } from "mongoose";
 import agenda from "../config/agenda.config";
+import s3Client from "../config/aws.config";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ShipCapsule } from "../job";
 import Capsule, { ICapsule } from "../models/capsule.model";
 import { IUser } from "../models/user.model";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+
+const fifteenMinutes = 60 * 15;
 
 class CapsuleService {
   // Create a capsule
@@ -11,13 +16,13 @@ class CapsuleService {
   }
 
   // Delete a single capsule
-  delete(capsuleId: string | Types.ObjectId) {
+  delete(capsuleId: string) {
     return Capsule.findByIdAndDelete(capsuleId);
   }
 
   // Get all capsule associated with a user
-  findAll(userId: string | Types.ObjectId) {
-    return Capsule.find({ userId });
+  findAll(email: string) {
+    return Capsule.find({ email });
   }
 
   // Find a single capsule
@@ -27,20 +32,15 @@ class CapsuleService {
 
   // Schedule a capsule for delivery to recipients
   async schedule(capsuleId: string | Types.ObjectId) {
-    const capsule = await Capsule.findById(capsuleId).populate<{
-      userId: IUser;
-    }>("userId");
-
+    const capsule = await Capsule.findById(capsuleId);
     if (!capsule) throw Error("Capsule Not Found");
 
     // Create array of capsule recipients
-    const recipients: ShipCapsule[] =
-      capsule.subscribers?.map(({ email }) => {
-        return { email, capsuleId, isSubscriber: true };
-      }) || [];
+    const recipients: ShipCapsule[] = [{ email: capsule.email, capsuleId }];
 
-    // Add Capsule creator to recipients
-    recipients.push({ email: capsule.userId.email, capsuleId });
+    capsule.subscribers?.forEach(({ email }) => {
+      recipients.push({ email, capsuleId, isSubscriber: true });
+    });
 
     // Schedule all capsules for delivery
     const caps = recipients.map(async (r) => {
@@ -51,6 +51,21 @@ class CapsuleService {
     Promise.all(caps).catch(async () => {
       await agenda.cancel({ capsuleId });
       throw new Error("Some capsules failed to be scheduled");
+    });
+  }
+
+  async getCapsuleVideoUrl(capsuleId: string) {
+    // Find capusle with capsuleId
+    const capsule = await Capsule.findById(capsuleId);
+    if (!capsule) throw Error("Capsule was not found");
+
+    const objectParams = {
+      Key: capsule.s3Key,
+      Bucket: process.env.DO_BUCKET_NAME,
+    };
+
+    return getSignedUrl(s3Client, new GetObjectCommand(objectParams), {
+      expiresIn: fifteenMinutes,
     });
   }
 }

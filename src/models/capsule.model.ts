@@ -1,7 +1,8 @@
 import mongoose, { Types, Schema } from "mongoose";
 
 export interface ICapsule {
-  userId: Types.ObjectId;
+  _id: string;
+  email: string;
   s3Key: string;
   caption: string;
   subscribers?: [{ email: string; isConfirmed: boolean }];
@@ -9,11 +10,7 @@ export interface ICapsule {
 }
 
 const CapsuleSchema = new mongoose.Schema<ICapsule>({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
+  email: { type: String, required: true },
   unlockDate: {
     type: Date,
     required: true,
