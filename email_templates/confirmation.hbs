@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Signup Link</title>
+    <title>Confirmation: Schedule Your Video Capsule</title>
     <style>
       body { font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4;
       color: #333; background-color: #f7f7f7; padding: 0; margin: 0; } table {
@@ -18,19 +18,20 @@
   <body>
     <table>
       <tr>
-        <th colspan="2">Signup Link</th>
+        <th colspan="2">Confirmation: Schedule Your Video Capsule</th>
       </tr>
       <tr>
         <td colspan="2">
           <p>Hello,</p>
-          <p>Thank you for your interest in signing up for our service. Please
-            use the following link to create your account:</p>
-          <p><a href="{{url}}">{{url}}</a></p>
-          <p>If you have any questions or concerns, please feel free to contact
-            us at
+          <p>You have successfully scheduled a video capsule to be delivered to
+            your future self on {delivery_date}. To confirm this scheduling,
+            please click on the following link:</p>
+          <p><a href="{{url}}">{confirmation_link}</a></p>
+          <p>If you did not schedule a video capsule or if you have any
+            questions or concerns, please contact us at
             <a href="mailto:{support_email}">{support_email}</a>.</p>
           <p>Best regards,</p>
-          <p>The Viddle team</p>
+          <p>The {company_name} team</p>
         </td>
       </tr>
     </table>
