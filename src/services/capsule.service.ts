@@ -2,9 +2,7 @@ import { Types } from "mongoose";
 import agenda from "../config/agenda.config";
 import s3Client from "../config/aws.config";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { ShipCapsule } from "../job";
 import Capsule, { ICapsule } from "../models/capsule.model";
-import { IUser } from "../models/user.model";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 
 const fifteenMinutes = 60 * 15;
@@ -36,22 +34,10 @@ class CapsuleService {
     if (!capsule) throw Error("Capsule Not Found");
 
     // Create array of capsule recipients
-    const recipients: ShipCapsule[] = [{ email: capsule.email, capsuleId }];
-
-    capsule.subscribers?.forEach(({ email }) => {
-      recipients.push({ email, capsuleId, isSubscriber: true });
-    });
+    const data = { email: capsule.email, capsuleId };
 
     // Schedule all capsules for delivery
-    const caps = recipients.map(async (r) => {
-      await agenda.schedule(capsule.unlockDate, "ship-capsule", r);
-    });
-
-    // Schedule all jobs or none
-    Promise.all(caps).catch(async () => {
-      await agenda.cancel({ capsuleId });
-      throw new Error("Some capsules failed to be scheduled");
-    });
+    await agenda.schedule(capsule.unlockDate, "ship-capsule", data);
   }
 
   async getCapsuleVideoUrl(capsuleId: string) {

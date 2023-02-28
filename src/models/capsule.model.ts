@@ -5,8 +5,8 @@ export interface ICapsule {
   email: string;
   s3Key: string;
   caption: string;
-  subscribers?: [{ email: string; isConfirmed: boolean }];
   unlockDate: Date | string;
+  status: string;
 }
 
 const CapsuleSchema = new mongoose.Schema<ICapsule>({
@@ -23,12 +23,11 @@ const CapsuleSchema = new mongoose.Schema<ICapsule>({
     type: String,
     required: true,
   },
-  subscribers: [
-    {
-      email: { type: String, required: true },
-      isConfirmed: { type: Boolean, default: false },
-    },
-  ],
+  status: {
+    type: String,
+    enum: ["unconfirmed", "sent", "delivered"],
+    default: "unconfirmed",
+  },
 });
 
 const Capsule = mongoose.model<ICapsule>("Capsule", CapsuleSchema);
