@@ -1,13 +1,43 @@
 import { EmailTemplate } from "../types/email";
-import { buildLoginURL, buildSignUpURL, sendEmail } from "../utils/email";
+import {
+  buildCapsuleViewURL,
+  buildConfirmationURL,
+  buildLoginURL,
+  buildSignUpURL,
+  sendEmail,
+} from "../utils/email";
 import { randomBytes } from "crypto";
 import tokenService from "./token.service";
+import { ICapsule } from "../models/capsule.model";
 
 // Define an email service class
 class EmailService {
-  sendConfirmationEmail() {}
-  sendSubsriptionEmail() {}
-  sendCapsuleEmail() {}
+  async sendConfirmationEmail(capsule: ICapsule) {
+    // Generate confirmation link
+    const url = buildConfirmationURL(capsule._id);
+
+    const emailOptions = {
+      context: { url, unlockDate: capsule.unlockDate },
+      to: capsule.email,
+      subject: "Capsule Confirmation",
+    };
+
+    await sendEmail(emailOptions, EmailTemplate.Confirmation);
+  }
+
+  async sendCapsuleEmail(capsule: ICapsule) {
+    // Generate delivery link
+    const { _id, caption } = capsule;
+    const url = buildCapsuleViewURL(_id);
+
+    const emailOptions = {
+      context: { url, caption },
+      to: capsule.email,
+      subject: "Capsule Delivery",
+    };
+
+    await sendEmail(emailOptions, EmailTemplate.Unlock);
+  }
 
   async sendLoginEmail(email: string, redirect?: string) {
     // Generate and create new token

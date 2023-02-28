@@ -38,3 +38,11 @@ export function buildLoginURL(token: string, redirect?: string) {
 
   return url;
 }
+
+export function buildConfirmationURL(capsuleId: string) {
+  return `${process.env.BASE_URL}/capsules/${capsuleId}/confirm`;
+}
+
+export function buildCapsuleViewURL(capsuleId: string) {
+  return `${process.env.BASE_URL}/public/capsules/${capsuleId}/`;
+}
