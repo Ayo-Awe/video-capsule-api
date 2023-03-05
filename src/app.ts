@@ -1,12 +1,11 @@
-import express, { ErrorRequestHandler, Express } from "express";
+import express, { Express } from "express";
 import * as dotenv from "dotenv";
 import apiRouter from "./routes/index";
 import { errorHandler, errorLogger } from "./middlewares/errorMiddleware";
 import connectDB from "./config/database.config";
 import agenda from "./config/agenda.config";
-import capsuleService from "./services/capsule.service";
-import mongoose from "mongoose";
 import { registerJobs } from "./job";
+import morgan from "morgan";
 
 dotenv.config();
 
@@ -15,6 +14,7 @@ const app: Express = express();
 
 // Middleware
 app.use(express.json());
+app.use(morgan("tiny"));
 app.use("/api", apiRouter);
 app.use(errorLogger);
 app.use(errorHandler);
