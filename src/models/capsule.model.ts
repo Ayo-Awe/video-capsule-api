@@ -1,4 +1,5 @@
-import mongoose, { Types, Schema } from "mongoose";
+import mongoose, { Types, Schema, Model } from "mongoose";
+import _ from "lodash";
 
 export interface ICapsule {
   _id: string;
@@ -7,13 +8,28 @@ export interface ICapsule {
   caption: string;
   unlockDate: Date | string;
   status: string;
+  createdAt: Date | string;
 }
 
-const CapsuleSchema = new mongoose.Schema<ICapsule>({
+export interface ICapsuleMethods {
+  format(): Omit<ICapsule, "s3Key">;
+}
+
+type CapsuleModel = Model<ICapsule, {}, ICapsuleMethods>;
+
+const CapsuleSchema = new mongoose.Schema<
+  ICapsule,
+  CapsuleModel,
+  ICapsuleMethods
+>({
   email: { type: String, required: true },
   unlockDate: {
     type: Date,
     required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
   },
   s3Key: {
     type: String,
@@ -25,10 +41,18 @@ const CapsuleSchema = new mongoose.Schema<ICapsule>({
   },
   status: {
     type: String,
-    enum: ["unconfirmed", "sent", "delivered"],
+    enum: ["unconfirmed", "scheduled", "delivered"],
     default: "unconfirmed",
   },
 });
 
-const Capsule = mongoose.model<ICapsule>("Capsule", CapsuleSchema);
+CapsuleSchema.method("format", function () {
+  const prps = ["_id", "email", "caption", "status", "createdAt", "unlockDate"];
+  return _.pick(this, ...prps) as Omit<ICapsule, "s3Key">;
+});
+
+const Capsule = mongoose.model<ICapsule, CapsuleModel>(
+  "Capsule",
+  CapsuleSchema
+);
 export default Capsule;

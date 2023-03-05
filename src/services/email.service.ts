@@ -12,7 +12,7 @@ import { ICapsule } from "../models/capsule.model";
 
 // Define an email service class
 class EmailService {
-  async sendConfirmationEmail(capsule: ICapsule) {
+  async sendConfirmationEmail(capsule: Omit<ICapsule, "s3Key">) {
     // Generate confirmation link
     const url = buildConfirmationURL(capsule._id);
 
@@ -25,7 +25,7 @@ class EmailService {
     await sendEmail(emailOptions, EmailTemplate.Confirmation);
   }
 
-  async sendCapsuleEmail(capsule: ICapsule) {
+  async sendCapsuleEmail(capsule: Omit<ICapsule, "s3Key">) {
     // Generate delivery link
     const { _id, caption } = capsule;
     const url = buildCapsuleViewURL(_id);

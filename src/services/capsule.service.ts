@@ -4,6 +4,7 @@ import s3Client from "../config/aws.config";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import Capsule, { ICapsule } from "../models/capsule.model";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
+import _ from "lodash";
 
 const fifteenMinutes = 60 * 15;
 
@@ -19,13 +20,18 @@ class CapsuleService {
   }
 
   // Get all capsule associated with a user
-  findAll(email: string) {
-    return Capsule.find({ email });
+  async findAll(email: string) {
+    const capsules = await Capsule.find({ email });
+
+    return capsules.map((c) => c.format());
   }
 
   // Find a single capsule
-  findOne(capsuleId: string | Types.ObjectId) {
-    return Capsule.findById(capsuleId);
+  async findOne(capsuleId: string | Types.ObjectId) {
+    const capsule = await Capsule.findById(capsuleId);
+    if (!capsule) return null;
+
+    return capsule.format();
   }
 
   // Schedule a capsule for delivery to recipients
@@ -38,6 +44,7 @@ class CapsuleService {
 
     // Schedule all capsules for delivery
     await agenda.schedule(capsule.unlockDate, "ship-capsule", data);
+    await capsule.updateOne({ status: "scheduled" });
   }
 
   async getCapsuleVideoUrl(capsuleId: string) {
