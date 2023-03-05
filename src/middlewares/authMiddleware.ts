@@ -1,8 +1,9 @@
 import { handleAsync, verifyJWT } from "../utils/helpers";
 import { Unauthorized } from "../errors/httpErrors";
+import userService from "../services/user.service";
 
 // Auth middleware
-export const auth = handleAsync((req, res, next) => {
+export const auth = handleAsync(async (req, res, next) => {
   // Get auth from header
   const { authorization } = req.headers;
 
@@ -21,8 +22,12 @@ export const auth = handleAsync((req, res, next) => {
   // Invalid or expired token
   if (!payload) throw new Unauthorized("Invalid or Expired Auth Token");
 
-  // Set user id in request object
-  req.user = payload.uid;
+  // Get user
+  const user = await userService.getById(payload.uid);
+
+  if (!user) throw new Unauthorized("Invalid Auth Token");
+
+  req.user = user;
 
   next();
 });
